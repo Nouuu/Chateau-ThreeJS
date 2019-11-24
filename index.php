@@ -5,10 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <style>
-    body {
-        padding: 0;
-        margin : 0;
-    }
+        body {
+            padding: 0;
+            margin : 0;
+        }
     </style>
 </head>
 <body>
@@ -29,8 +29,8 @@
         scene = new THREE.Scene();
 
         camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 3000);
-        camera.position.z = 250;
-        camera.position.y = 100;
+        camera.position.z = 350;
+        camera.position.y = 200;
         camera.rotation.x -= 0.45;
         var geometry;
 
@@ -139,12 +139,31 @@
         tour.add(mesh.clone());
         tour.add(mesh2.clone());
 
+        /**
+         * Donjon
+         */
+
+        var donjon = new THREE.Group();
+        mesh = new THREE.Mesh(new THREE.CylinderBufferGeometry(40, 40, 200, 32), materialMur);
+        mesh.position.y = 0;
+
+        mesh2 = new THREE.Mesh(new THREE.CylinderBufferGeometry(0, 50, 70, 32), materialToit);
+        mesh2.position.y = 130;
+        donjon.add(mesh.clone());
+        donjon.add(mesh2.clone());
+
 
         /**
          * Affichage
          */
 
+        donjon.position.set(0,0,0);
+        instanceToScene(donjon);
+        tour.position.set(140,0,-115);
+        instanceToScene(tour);
         tour.position.set(-140,0,115);
+        instanceToScene(tour);
+        tour.position.set(-140,0,-115);
         instanceToScene(tour);
         tour.position.set(140,0,115);
         instanceToScene(tour);
