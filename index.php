@@ -39,6 +39,7 @@
          */
 
         var textMur = new THREE.TextureLoader().load('./tex/stone wall 7.png');
+        var textLMur = new THREE.TextureLoader().load('./tex/stone wall 7.png');
         var textRempart = new THREE.TextureLoader().load('./tex/stone wall 7.png');
         var textGrass = new THREE.TextureLoader().load('./tex/grass1.png');
         var textPorte = new THREE.TextureLoader().load('./tex/door.jpg');
@@ -49,6 +50,9 @@
         textRempart.wrapS = THREE.RepeatWrapping;
         textRempart.wrapT = THREE.RepeatWrapping;
         textRempart.repeat.set(0.5, 0.25);
+        textLMur.wrapS = THREE.RepeatWrapping;
+        textLMur.wrapT = THREE.RepeatWrapping;
+        textLMur.repeat.set(10, 2);
         textMur.wrapS = THREE.RepeatWrapping;
         textMur.wrapT = THREE.RepeatWrapping;
         textMur.repeat.set(4, 2);
@@ -62,6 +66,7 @@
         textGrass.wrapT = THREE.RepeatWrapping;
         textGrass.repeat.set(80, 80);
 
+        var materialLMur = new THREE.MeshBasicMaterial({map: textLMur});
         var materialMur = new THREE.MeshBasicMaterial({map: textMur});
         var materialRempart = new THREE.MeshBasicMaterial({map: textRempart});
         var materialGrass = new THREE.MeshBasicMaterial({map: textGrass});
@@ -103,7 +108,7 @@
          */
         var large_muraille = new THREE.Group();
         geometry = new THREE.CubeGeometry(310, 40, 10);
-        mesh = new THREE.Mesh(geometry, materialMur);
+        mesh = new THREE.Mesh(geometry, materialLMur);
         large_muraille.add(mesh.clone());
 
         for (let initX = -140; initX <= 140; initX += 20) {
