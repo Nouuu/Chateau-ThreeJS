@@ -38,19 +38,23 @@
         /**
          * Textures matériel
          */
-        var textMurPath = './tex/stone wall 7.png';
-        var textRoofPath = './tex/roof.jpg';
-        var textWindowPath = './tex/window.jpg';
+        var textMurPath      = './tex/stone wall 7.png';
+        var textMurStonePath = './tex/stone wall 10.png';
+        var textRoofPath     = './tex/roof.jpg';
+        var textRoofWoodPath = './tex/wood floor 2.png';
+        var textWindowPath   = './tex/window.jpg';
+        var textDoorPath     = '.tex/door.jpg';
+
         var textGrass = new THREE.TextureLoader().load('./tex/grass1.png');
         var textPorte = new THREE.TextureLoader().load('./tex/door.jpg');
-        var textGate = new THREE.TextureLoader().load(textMurPath);
-        var textToit = new THREE.TextureLoader().load('./tex/roof.jpg');
-        var textSky = new THREE.TextureLoader().load('./tex/sky.jpg');
+        var textGate  = new THREE.TextureLoader().load(textMurPath);
+        var textToit  = new THREE.TextureLoader().load('./tex/roof.jpg');
+        var textSky   = new THREE.TextureLoader().load('./tex/sky.jpg');
 
         var materialGrass = new THREE.MeshBasicMaterial({map: textGrass});
         var materialPorte = new THREE.MeshBasicMaterial({map: textPorte});
-        var materialGate = new THREE.MeshBasicMaterial({map: textGate});
-        var materialToit = new THREE.MeshBasicMaterial({map: textToit});
+        var materialGate  = new THREE.MeshBasicMaterial({map: textGate});
+        var materialToit  = new THREE.MeshBasicMaterial({map: textToit});
 
         /**
          * Objets
@@ -104,6 +108,20 @@
             WindowWidth: 20,
             WindowHeigth: 20,
             WindowDepth: 3,
+        };
+        const HOUSE = {
+            Width: 150,
+            Height: 100,
+            Depth: 150,
+            RoofRadiusTop: 0,
+            RoofRadiusBottom: 130,
+            RoofHeight: 50,
+            RoofRadialSegment: 4,
+            DoorWidth: 30,
+            DoorHeight: 30,
+            WindowWidth: 40,
+            WindowHeigth: 40,
+            WindowDepth: 2,
         };
         /**
          * Répétition des textures
@@ -295,6 +313,60 @@
         tour.add(mesh2.clone());
 
         return tour;
+    }
+
+    function createHouse(house, murPath, roofPath, windowPath, doorPath) {
+        var group = new THREE.Group();
+        var textMur = new THREE.TextureLoader().load(murPath);
+        var textToit = new THREE.TextureLoader().load(roofPath);
+        var textPorte = new THREE.TextureLoader().load(doorPath);
+        var textWindow = new THREE.TextureLoader().load(windowPath);
+        
+        textMur.wrapS = THREE.RepeatWrapping;
+        textMur.wrapT = THREE.RepeatWrapping;
+        textMur.repeat.set(house.Width / 20, house.Height / 20);
+
+        textToit.wrapS = THREE.RepeatWrapping;
+        textToit.wrapT = THREE.RepeatWrapping;
+        textToit.repeat.set(6, 3);
+
+        textPorte.wrapS = THREE.RepeatWrapping;
+        textPorte.wrapT = THREE.RepeatWrapping;
+        textPorte.repeat.set(2, 1);
+        
+        var materialWindow = new THREE.MeshBasicMaterial({map: textWindow});
+        var materialMur    = new THREE.MeshBasicMaterial({map: textMur});
+        var materialPorte  = new THREE.MeshBasicMaterial({map: textPorte});
+        var materialToit   = new THREE.MeshBasicMaterial({map: textToit});
+
+
+        mesh = new THREE.Mesh(new THREE.BoxGeometry(house.Width, house.Height, house.Depth), materialMur);
+        mesh.position.set(0, house.Height / 2, 0);
+
+        mesh2 = new THREE.Mesh(new THREE.PlaneGeometry(house.DoorWidth, house.DoorHeight), materialPorte);
+        mesh2.position.set(0, house.DoorHeight / 2, house.Depth / 2 + 0.1);
+
+        mesh3 = new THREE.Mesh(new THREE.CylinderBufferGeometry(
+            house.RoofRadiusTop,
+            house.RoofRadiusBottom,
+            house.RoofHeight,
+            house.RoofRadialSegment), materialToit);
+        mesh3.position.y = house.Height +  house.RoofHeight / 2;
+        mesh3.rotateY(Math.radians(45));
+
+        mesh4 = new THREE.Mesh(new THREE.BoxGeometry(house.WindowWidth, house.WindowHeigth, house.WindowDepth),
+                materialWindow);
+        mesh4.rotateY(Math.radians(90));
+        mesh4.position.set(house.Width / 2, house.Height - house.WindowHeigth / 2 - 10, 0);
+        group.add(mesh4.clone());
+
+        mesh4.position.set(-house.Width / 2, house.Height - house.WindowHeigth / 2 - 10, 0);
+        group.add(mesh4.clone());
+        
+        group.add(mesh.clone());
+        group.add(mesh2.clone());
+        group.add(mesh3.clone());
+        return group;
     }
 
 
