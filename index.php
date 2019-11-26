@@ -240,30 +240,30 @@
         donjon.position.set(0, 0, 0);
         instanceToScene(donjon);
 
-        tour.position.set(-140, 0, 115);
+        tour.position.set(-(TowerRadiusBottom + MurailleWidth / 2 - 5), 0, TowerRadiusBottom + MurailleWidth / 2 - 5);
         instanceToScene(tour);
-        tour.position.set(140, 0, 115);
+        tour.position.set(TowerRadiusBottom + MurailleWidth / 2 - 5, 0, TowerRadiusBottom + MurailleWidth / 2 - 5);
         instanceToScene(tour);
-        tour.position.set(-140, 0, -200);
+        tour.position.set(-(TowerRadiusBottom + MurailleWidth / 2 - 5), 0, -(TowerRadiusBottom + MurailleWidth / 2 - 5));
         instanceToScene(tour);
-        tour.position.set(140, 0, -200);
+        tour.position.set(TowerRadiusBottom + MurailleWidth / 2 - 5, 0, -(TowerRadiusBottom + MurailleWidth / 2 - 5));
         instanceToScene(tour);
 
-        frontMuraille.position.set(-70, 20, 115);
+        frontMuraille.position.set(-(FrontMurailleWidth + GateWidth) / 2, 0, (MurailleDepth + MurailleWidth + TowerRadiusBottom) / 2);
         instanceToScene(frontMuraille);
-        frontMuraille.position.set(70, 20, 115);
+        frontMuraille.position.set((FrontMurailleWidth + GateWidth) / 2, 0, (MurailleDepth + MurailleWidth + TowerRadiusBottom) / 2);
         instanceToScene(frontMuraille);
 
 
-        large_muraille.position.set(0, 20, -200);
-        instanceToScene(large_muraille);
-        large_muraille.position.set(-135, 20, -30);
-        large_muraille.rotation.y = Math.radians(90);
-        instanceToScene(large_muraille);
-        large_muraille.position.set(145, 20, -30);
-        instanceToScene(large_muraille);
+        muraille.position.set(0, 0, -(MurailleDepth + MurailleWidth + TowerRadiusBottom) / 2);
+        instanceToScene(muraille);
+        muraille.position.set(-(MurailleDepth + MurailleWidth + TowerRadiusBottom) / 2, 0, 0);
+        muraille.rotation.y = Math.radians(90);
+        instanceToScene(muraille);
+        muraille.position.set((MurailleDepth + MurailleWidth + TowerRadiusBottom) / 2, 0, 0);
+        instanceToScene(muraille);
 
-        entree.position.set(0, 0, 100);
+        entree.position.set(0, 0, frontMuraille.position.z);
         instanceToScene(entree);
         group.add(terrain);
 
