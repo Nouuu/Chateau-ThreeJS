@@ -275,6 +275,7 @@
          * Options de rendu
          */
         scene.background = textSky;
+        scene.fog = new THREE.Fog(0x6086b0, 600,1000);
         renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
