@@ -177,19 +177,19 @@
         tour.position.set(Tour.Radius + Muraille.Width / 2 - 5, 0, -(Tour.Radius + Muraille.Width / 2 - 5));
         instanceToScene(tour);
 
-        frontMuraille.position.set(-(FrontMuraille.Width + Gate.Width) / 2, 0,  (Muraille.Depth + Muraille.Width + Tour.Radius) / 2);
+        frontMuraille.position.set(-(FrontMuraille.Width + Gate.Width) / 2, 0, (Muraille.Depth + Muraille.Width + Tour.Radius) / 2);
         instanceToScene(frontMuraille);
-        frontMuraille.position.set((FrontMuraille.Width + Gate.Width) / 2, 0,  (Muraille.Depth + Muraille.Width + Tour.Radius) / 2);
+        frontMuraille.position.set((FrontMuraille.Width + Gate.Width) / 2, 0, (Muraille.Depth + Muraille.Width + Tour.Radius) / 2);
         instanceToScene(frontMuraille);
 
 
-        muraille.position.set(0, 0, - (Muraille.Depth + Muraille.Width + Tour.Radius) / 2);
-        instanceToScene (muraille);
-        muraille.position.set(- (Muraille.Depth + Muraille.Width + Tour.Radius) / 2, 0, 0);
+        muraille.position.set(0, 0, -(Muraille.Depth + Muraille.Width + Tour.Radius) / 2);
+        instanceToScene(muraille);
+        muraille.position.set(-(Muraille.Depth + Muraille.Width + Tour.Radius) / 2, 0, 0);
         muraille.rotation.y = Math.radians(90);
-        instanceToScene (muraille);
-        muraille.position.set( (Muraille.Depth + Muraille.Width + Tour.Radius) / 2, 0, 0);
-        instanceToScene (muraille);
+        instanceToScene(muraille);
+        muraille.position.set((Muraille.Depth + Muraille.Width + Tour.Radius) / 2, 0, 0);
+        instanceToScene(muraille);
 
         entree.position.set(0, 0, frontMuraille.position.z);
         instanceToScene(entree);
@@ -214,18 +214,20 @@
         scene.add(group);
     }
 
-    function createMuraille(Muraille, Rempart, textPath) {
+    function createMuraille(Muraille, Rempart = null, textPath) {
         var geometry;
-        var textRempart = new THREE.TextureLoader().load(textPath);
         var textMur = new THREE.TextureLoader().load(textPath);
-        textRempart.wrapS = THREE.RepeatWrapping;
-        textRempart.wrapT = THREE.RepeatWrapping;
-        textRempart.repeat.set(Rempart.Width / 20, Rempart.Height / 20);
+        if (Rempart !== null) {
+            var textRempart = new THREE.TextureLoader().load(textPath);
+            textRempart.wrapS = THREE.RepeatWrapping;
+            textRempart.wrapT = THREE.RepeatWrapping;
+            textRempart.repeat.set(Rempart.Width / 20, Rempart.Height / 20);
+            var materialRempart = new THREE.MeshBasicMaterial({map: textRempart});
+        }
         textMur.wrapS = THREE.RepeatWrapping;
         textMur.wrapT = THREE.RepeatWrapping;
         textMur.repeat.set(Muraille.Width / 20, Muraille.Height / 20);
         var materialMur = new THREE.MeshBasicMaterial({map: textMur});
-        var materialRempart = new THREE.MeshBasicMaterial({map: textRempart});
 
 
         var MurailleG = new THREE.Group();
@@ -236,13 +238,15 @@
         mesh.position.y = Muraille.Height / 2;
         MurailleG.add(mesh.clone());
 
-        for (let initX = -(Muraille.Width / 2) + (Rempart.Width / 2); initX <= Muraille.Width / 2; initX += 20) {
-            geometry = new THREE.CubeGeometry(Rempart.Width, Rempart.Height, Rempart.Depth);
-            mesh = new THREE.Mesh(geometry, materialRempart);
-            mesh.position.set(initX, Muraille.Height + Rempart.Height / 2, (Muraille.Depth - Rempart.Depth) / 2);
-            MurailleG.add(mesh.clone());
-            mesh.position.z = (-Muraille.Depth + Rempart.Depth) / 2;
-            MurailleG.add(mesh.clone());
+        if (Rempart !== null) {
+            for (let initX = -(Muraille.Width / 2) + (Rempart.Width / 2); initX <= Muraille.Width / 2; initX += 20) {
+                geometry = new THREE.CubeGeometry(Rempart.Width, Rempart.Height, Rempart.Depth);
+                mesh = new THREE.Mesh(geometry, materialRempart);
+                mesh.position.set(initX, Muraille.Height + Rempart.Height / 2, (Muraille.Depth - Rempart.Depth) / 2);
+                MurailleG.add(mesh.clone());
+                mesh.position.z = (-Muraille.Depth + Rempart.Depth) / 2;
+                MurailleG.add(mesh.clone());
+            }
         }
         return MurailleG;
     }
