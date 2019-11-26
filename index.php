@@ -7,7 +7,7 @@
     <style>
         body {
             padding: 0;
-            margin : 0;
+            margin: 0;
         }
     </style>
 </head>
@@ -29,9 +29,10 @@
         scene = new THREE.Scene();
 
         camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 3000);
-        camera.position.z = 350;
-        camera.position.y = 200;
-        camera.rotation.x -= 0.45;
+        camera.position.z = 300;
+        camera.position.y = 130;
+        //camera.position.x = -100;
+        camera.rotation.x -= 0.4;
         var geometry;
 
         /**
@@ -47,6 +48,7 @@
         var textToit = new THREE.TextureLoader().load('./tex/roof.jpg');
         var textWindow = new THREE.TextureLoader().load('./tex/window.jpg');
         var textSky = new THREE.TextureLoader().load('./tex/sky.jpg');
+
         textRempart.wrapS = THREE.RepeatWrapping;
         textRempart.wrapT = THREE.RepeatWrapping;
         textRempart.repeat.set(0.5, 0.25);
@@ -76,6 +78,51 @@
         var materialWindow = new THREE.MeshBasicMaterial({map: textWindow});
 
         /**
+         * Taille des objects
+         */
+
+            //entrée + porte
+        var GateWidth = 40;
+        var GateHeight = 50;
+        var GateDepth = 40;
+        var GateRoofRadiusTop = 0;
+        var GateRoofRadiusBottom = 28;
+        var GateRoofHeight = 20;
+        var GateRoofRadialSegment = 4;
+        var DoorWidth = 40;
+        var DoorHeight = 40;
+        //front muraille
+        var FrontMurailleWidth = 150;
+        //muraille
+        var MurailleWidth = FrontMurailleWidth * 2 + GateWidth;
+        var MurailleHeight = 40;
+        var MurailleDepth = 20;
+        //remparts
+        var RempartWidth = 6;
+        var RempartHeight = 5;
+        var RempartDepth = 2;
+        //tour
+        var TowerRadiusTop = 20;
+        var TowerRadiusBottom = 20;
+        var TowerHeight = 70;
+        var TowerRadialSegment = 32;
+        var TowerRoofRadiusTop = 0;
+        var TowerRoofRadiusBottom = 25;
+        var TowerRoofHeight = 20;
+        var TowerRoofRadialSegment = 32;
+        var TowerWindowWidth = 10;
+        var TowerWindowHeigth = 10;
+        var TowerWindowDepth = 3;
+        //donjon
+        var DonjonRadiusTop = 40;
+        var DonjonRadiusBottom = 40;
+        var DonjonHeight = 100;
+        var DonjonRadialSegment = 32;
+        var DonjonRoofRadiusTop = 0;
+        var DonjonRoofRadiusBottom = 50;
+        var DonjonRoofHeight = 70;
+        var DonjonRoofRadialSegment = 32;
+        /**
          * Ajout du terrain
          */
         geometry = new THREE.PlaneGeometry(3000, 3000);
@@ -85,54 +132,59 @@
 
 
         /**
-         * Muraille
+         * Muraille avant
          */
-        var muraille = new THREE.Group();
-        geometry = new THREE.CubeGeometry(100, 40, 10);
-        mesh = new THREE.Mesh(geometry, materialMur);
-        muraille.add(mesh.clone());
+        var frontMuraille = new THREE.Group();
 
-        for (let initX = -47; initX <= 50; initX += 20) {
-            geometry = new THREE.CubeGeometry(6, 3, 2);
+        geometry = new THREE.CubeGeometry(FrontMurailleWidth, MurailleHeight, MurailleDepth);
+        mesh = new THREE.Mesh(geometry, materialMur);
+        mesh.position.y = MurailleHeight / 2;
+        frontMuraille.add(mesh.clone());
+
+        for (let initX = -(FrontMurailleWidth / 2) + (RempartWidth / 2); initX <= FrontMurailleWidth / 2; initX += 20) {
+            geometry = new THREE.CubeGeometry(RempartWidth, RempartHeight, RempartDepth);
             mesh = new THREE.Mesh(geometry, materialRempart);
-            mesh.position.set(initX, 21.5, 4);
-            muraille.add(mesh.clone());
-            mesh.position.z = -4;
-            muraille.add(mesh.clone());
+            mesh.position.set(initX, MurailleHeight + RempartHeight / 2, (MurailleDepth - RempartDepth) / 2);
+            frontMuraille.add(mesh.clone());
+            mesh.position.z = (-MurailleDepth + RempartDepth) / 2;
+            frontMuraille.add(mesh.clone());
         }
+
         /**
          * Muraille longue
-         * 
-         * todo : Fusionner avec le bloc du dessus et crée une fonction
-         *      + crée une nouvelle texture
          */
-        var large_muraille = new THREE.Group();
-        geometry = new THREE.CubeGeometry(310, 40, 10);
+        var muraille = new THREE.Group();
+        geometry = new THREE.CubeGeometry(MurailleWidth, MurailleHeight, MurailleDepth);
         mesh = new THREE.Mesh(geometry, materialLMur);
-        large_muraille.add(mesh.clone());
+        mesh.position.y = MurailleHeight / 2;
+        muraille.add(mesh.clone());
 
-        for (let initX = -140; initX <= 140; initX += 20) {
-            geometry = new THREE.CubeGeometry(6, 3, 2);
+        for (let initX = -(MurailleWidth / 2) + (RempartWidth / 2); initX <= MurailleWidth / 2; initX += 20) {
+            geometry = new THREE.CubeGeometry(RempartWidth, RempartHeight, RempartDepth);
             mesh = new THREE.Mesh(geometry, materialRempart);
-            mesh.position.set(initX, 21.5, 4);
-            large_muraille.add(mesh.clone());
-            mesh.position.z = -4;
-            large_muraille.add(mesh.clone());
+            mesh.position.set(initX, MurailleHeight + RempartHeight / 2, (MurailleDepth - RempartDepth) / 2);
+            muraille.add(mesh.clone());
+            mesh.position.z = (-MurailleDepth + RempartDepth) / 2;
+            muraille.add(mesh.clone());
         }
 
         /**
          * Entrée + porte
          */
         var entree = new THREE.Group();
-        mesh = new THREE.Mesh(new THREE.BoxGeometry(40, 50, 40), materialGate);
-        mesh.position.set(0, 25, 0);
+        mesh = new THREE.Mesh(new THREE.BoxGeometry(GateWidth, GateHeight, GateDepth), materialGate);
+        mesh.position.set(0, GateHeight / 2, 0);
 
-        geometry = new THREE.PlaneGeometry(40, 40);
+        geometry = new THREE.PlaneGeometry(DoorWidth, DoorHeight);
         mesh2 = new THREE.Mesh(geometry, materialPorte);
-        mesh2.position.set(0, 20, 20.1);
+        mesh2.position.set(0, DoorHeight / 2, GateDepth / 2 + 0.1);
 
-        mesh3 = new THREE.Mesh(new THREE.CylinderBufferGeometry(0, 28, 20, 4), materialToit);
-        mesh3.position.y = 60;
+        mesh3 = new THREE.Mesh(new THREE.CylinderBufferGeometry(
+            GateRoofRadiusTop,
+            GateRoofRadiusBottom,
+            GateRoofHeight,
+            GateRoofRadialSegment), materialToit);
+        mesh3.position.y = GateHeight + GateRoofHeight / 2;
         mesh3.rotateY(Math.radians(45));
 
         entree.add(mesh.clone());
@@ -143,21 +195,24 @@
          */
 
         var tour = new THREE.Group();
-        mesh = new THREE.Mesh(new THREE.CylinderBufferGeometry(20, 20, 70, 32), materialMur);
-        mesh.position.y = 35;
+        mesh = new THREE.Mesh(new THREE.CylinderBufferGeometry(TowerRadiusTop, TowerRadiusBottom, TowerHeight,
+            TowerRadialSegment), materialMur);
+        mesh.position.y = TowerHeight / 2;
 
-        mesh2 = new THREE.Mesh(new THREE.CylinderBufferGeometry(0, 25, 20, 32), materialToit);
-        mesh2.position.y = 80;
+        mesh2 = new THREE.Mesh(new THREE.CylinderBufferGeometry(TowerRoofRadiusTop, TowerRoofRadiusBottom,
+            TowerRoofHeight, TowerRoofRadialSegment), materialToit);
+        mesh2.position.y = TowerHeight + TowerRoofHeight / 2;
 
-        mesh3 = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 3), materialWindow);
-        mesh3.position.set(0, 60, 18.5);
+        mesh3 = new THREE.Mesh(new THREE.BoxGeometry(TowerWindowWidth, TowerWindowHeigth, TowerWindowDepth),
+            materialWindow);
+        mesh3.position.set(0, TowerHeight - TowerWindowHeigth / 2 - 5, TowerRadiusTop - TowerWindowDepth / 2);
         tour.add(mesh3.clone());
-        mesh3.position.set(0, 60, -18.5);
+        mesh3.position.set(0, TowerHeight - TowerWindowHeigth / 2 - 5, -TowerRadiusTop + TowerWindowDepth / 2);
         tour.add(mesh3.clone());
         mesh3.rotateY(Math.radians(90));
-        mesh3.position.set(18.5, 60, 0);
+        mesh3.position.set(TowerRadiusTop - TowerWindowDepth / 2, TowerHeight - TowerWindowHeigth / 2 - 5, 0);
         tour.add(mesh3.clone());
-        mesh3.position.set(-18.5, 60, 0);
+        mesh3.position.set(-TowerRadiusTop + TowerWindowDepth / 2, TowerHeight - TowerWindowHeigth / 2 - 5, 0);
         tour.add(mesh3.clone());
 
         tour.add(mesh.clone());
@@ -168,11 +223,13 @@
          */
 
         var donjon = new THREE.Group();
-        mesh = new THREE.Mesh(new THREE.CylinderBufferGeometry(40, 40, 200, 32), materialMur);
-        mesh.position.y = 0;
+        mesh = new THREE.Mesh(new THREE.CylinderBufferGeometry(DonjonRadiusTop, DonjonRadiusBottom, DonjonHeight,
+            DonjonRadialSegment), materialMur);
+        mesh.position.y = DonjonHeight / 2;
 
-        mesh2 = new THREE.Mesh(new THREE.CylinderBufferGeometry(0, 50, 70, 32), materialToit);
-        mesh2.position.y = 130;
+        mesh2 = new THREE.Mesh(new THREE.CylinderBufferGeometry(DonjonRoofRadiusTop, DonjonRoofRadiusBottom,
+            DonjonRoofHeight, DonjonRoofRadialSegment), materialToit);
+        mesh2.position.y = DonjonHeight + DonjonRoofHeight / 2;
         donjon.add(mesh.clone());
         donjon.add(mesh2.clone());
 
@@ -180,36 +237,36 @@
         /**
          * Affichage
          */
-        donjon.position.set(0,0,0);
+        donjon.position.set(0, 0, 0);
         instanceToScene(donjon);
 
-        tour.position.set(-140,0,115);
+        tour.position.set(-(TowerRadiusBottom + MurailleWidth / 2 - 5), 0, TowerRadiusBottom + MurailleWidth / 2 - 5);
         instanceToScene(tour);
-        tour.position.set(140,0,115);
+        tour.position.set(TowerRadiusBottom + MurailleWidth / 2 - 5, 0, TowerRadiusBottom + MurailleWidth / 2 - 5);
         instanceToScene(tour);
-        tour.position.set(-140,0,-200);
+        tour.position.set(-(TowerRadiusBottom + MurailleWidth / 2 - 5), 0, -(TowerRadiusBottom + MurailleWidth / 2 - 5));
         instanceToScene(tour);
-        tour.position.set(140,0,-200);
+        tour.position.set(TowerRadiusBottom + MurailleWidth / 2 - 5, 0, -(TowerRadiusBottom + MurailleWidth / 2 - 5));
         instanceToScene(tour);
 
-        muraille.position.set(-70, 20, 115);
+        frontMuraille.position.set(-(FrontMurailleWidth + GateWidth) / 2, 0, (MurailleDepth + MurailleWidth + TowerRadiusBottom) / 2);
+        instanceToScene(frontMuraille);
+        frontMuraille.position.set((FrontMurailleWidth + GateWidth) / 2, 0, (MurailleDepth + MurailleWidth + TowerRadiusBottom) / 2);
+        instanceToScene(frontMuraille);
+
+
+        muraille.position.set(0, 0, -(MurailleDepth + MurailleWidth + TowerRadiusBottom) / 2);
         instanceToScene(muraille);
-        muraille.position.set(70, 20, 115);
+        muraille.position.set(-(MurailleDepth + MurailleWidth + TowerRadiusBottom) / 2, 0, 0);
+        muraille.rotation.y = Math.radians(90);
+        instanceToScene(muraille);
+        muraille.position.set((MurailleDepth + MurailleWidth + TowerRadiusBottom) / 2, 0, 0);
         instanceToScene(muraille);
 
-
-        large_muraille.position.set(0, 20, -200);
-        instanceToScene(large_muraille);
-        large_muraille.position.set(-135, 20, -30);
-        large_muraille.rotation.y = Math.radians(90);
-        instanceToScene(large_muraille);
-        large_muraille.position.set(145, 20, -30);
-        instanceToScene(large_muraille);
-
-        entree.position.set(0, 0, 100);
+        entree.position.set(0, 0, frontMuraille.position.z);
         instanceToScene(entree);
         group.add(terrain);
-        
+
         /**
          * Options de rendu
          */
@@ -239,7 +296,7 @@
 
     function animate() {
         requestAnimationFrame(animate);
-        group.rotation.y += 0.005;
+        //group.rotation.y += 0.005;
         renderer.render(scene, camera);
     }
 </script>
