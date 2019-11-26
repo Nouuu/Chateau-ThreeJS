@@ -30,7 +30,7 @@
 
         camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 3000);
         camera.position.z = 300;
-        camera.position.y = 130;
+        camera.position.y = 230;
         //camera.position.x = -100;
         camera.rotation.x -= 0.4;
         var geometry;
@@ -48,25 +48,6 @@
         var textToit = new THREE.TextureLoader().load('./tex/roof.jpg');
         var textWindow = new THREE.TextureLoader().load('./tex/window.jpg');
         var textSky = new THREE.TextureLoader().load('./tex/sky.jpg');
-
-        textRempart.wrapS = THREE.RepeatWrapping;
-        textRempart.wrapT = THREE.RepeatWrapping;
-        textRempart.repeat.set(0.5, 0.25);
-        textLMur.wrapS = THREE.RepeatWrapping;
-        textLMur.wrapT = THREE.RepeatWrapping;
-        textLMur.repeat.set(14, 2);
-        textMur.wrapS = THREE.RepeatWrapping;
-        textMur.wrapT = THREE.RepeatWrapping;
-        textMur.repeat.set(6, 2);
-        textGate.wrapS = THREE.RepeatWrapping;
-        textGate.wrapT = THREE.RepeatWrapping;
-        textGate.repeat.set(2, 2);
-        textToit.wrapS = THREE.RepeatWrapping;
-        textToit.wrapT = THREE.RepeatWrapping;
-        textToit.repeat.set(2, 1);
-        textGrass.wrapS = THREE.RepeatWrapping;
-        textGrass.wrapT = THREE.RepeatWrapping;
-        textGrass.repeat.set(80, 80);
 
         var materialLMur = new THREE.MeshBasicMaterial({map: textLMur});
         var materialMur = new THREE.MeshBasicMaterial({map: textMur});
@@ -98,7 +79,7 @@
         var MurailleHeight = 40;
         var MurailleDepth = 20;
         //remparts
-        var RempartWidth = 6;
+        var RempartWidth = 8;
         var RempartHeight = 5;
         var RempartDepth = 2;
         //tour
@@ -120,10 +101,35 @@
         var DonjonRoofRadiusBottom = 50;
         var DonjonRoofHeight = 70;
         var DonjonRoofRadialSegment = 32;
+
+        /**
+         * Répétition des textures
+         */
+
+        textRempart.wrapS = THREE.RepeatWrapping;
+        textRempart.wrapT = THREE.RepeatWrapping;
+        textRempart.repeat.set(RempartWidth / 20, RempartHeight / 20);
+        textLMur.wrapS = THREE.RepeatWrapping;
+        textLMur.wrapT = THREE.RepeatWrapping;
+        textLMur.repeat.set(MurailleWidth / 20, MurailleHeight / 20);
+        textMur.wrapS = THREE.RepeatWrapping;
+        textMur.wrapT = THREE.RepeatWrapping;
+        textMur.repeat.set(FrontMurailleWidth / 20, MurailleHeight / 20);
+        textGate.wrapS = THREE.RepeatWrapping;
+        textGate.wrapT = THREE.RepeatWrapping;
+        textGate.repeat.set(GateWidth/20, GateHeight/20);
+        textToit.wrapS = THREE.RepeatWrapping;
+        textToit.wrapT = THREE.RepeatWrapping;
+        textToit.repeat.set(2, 1);
+        textGrass.wrapS = THREE.RepeatWrapping;
+        textGrass.wrapT = THREE.RepeatWrapping;
+        textGrass.repeat.set(100,100);
+
+
         /**
          * Ajout du terrain
          */
-        geometry = new THREE.PlaneGeometry(3000, 3000);
+        geometry = new THREE.CircleGeometry(1000,64);
         terrain = new THREE.Mesh(geometry, materialGrass);
         terrain.rotateX(Math.radians(-90));
         scene.add(terrain);
@@ -269,6 +275,7 @@
          * Options de rendu
          */
         scene.background = textSky;
+        scene.fog = new THREE.Fog(0x6086b0, 600,1000);
         renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
