@@ -31,7 +31,6 @@
         camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 3000);
         camera.position.z = 300;
         camera.position.y = 180;
-        //camera.position.x = -100;
         camera.rotation.x -= 0.5;
         var geometry;
 
@@ -443,8 +442,6 @@
         mesh3.position.y = house.Height + house.RoofHeight / 2;
         mesh3.rotateY(Math.radians(45));
 
-        console.log(house.WindowHeight);
-        console.log(house.WindowWidth);
         mesh4 = new THREE.Mesh(new THREE.BoxGeometry(house.WindowWidth, house.WindowHeight, house.WindowDepth),
             materialWindow);
         mesh4.rotateY(Math.radians(90));
@@ -543,7 +540,6 @@
 
     function animate() {
         requestAnimationFrame(animate);
-        //group.rotation.y += 0.005;
         renderer.render(scene, camera);
     }
 </script>
