@@ -111,18 +111,6 @@
             WindowHeigth: 10,
             WindowDepth: 3,
         };
-        var Donjon = {
-            Radius: 55,
-            Height: 180,
-            RadialSegment: 4,
-            RoofRadiusTop: 0,
-            RoofRadiusBottom: 55,
-            RoofHeight: 70,
-            RoofRadialSegment: 8,
-            WindowWidth: 20,
-            WindowHeigth: 20,
-            WindowDepth: 30,
-        };
         var House = {
             Width: 50,
             Height: 60,
