@@ -62,20 +62,20 @@
          * Objets
          */
         var Gate = {
-            Width: 40,
-            Height: 50,
-            Depth: 40,
+            Width: 80,
+            Height: 80,
+            Depth: 80,
             RoofRadiusTop: 0,
-            RoofRadiusBottom: 28,
-            RoofHeight: 20,
+            RoofRadiusBottom: 57,
+            RoofHeight: 30,
             RoofRadialSegment: 4,
-            DoorWidth: 40,
-            DoorHeight: 40
+            DoorWidth: 50,
+            DoorHeight: 50
         };
         var FrontMuraille = {
             Width: 150,
             Height: 40,
-            Depth: 20,
+            Depth: 10,
         };
         var Muraille = {
             Width: FrontMuraille.Width * 2 + Gate.Width,
@@ -94,6 +94,18 @@
             RoofRadiusTop: 0,
             RoofRadiusBottom: 25,
             RoofHeight: 30,
+            RoofRadialSegment: 32,
+            WindowWidth: 10,
+            WindowHeigth: 10,
+            WindowDepth: 3,
+        };
+        var TourEntree = {
+            Radius: 15,
+            Height: 120,
+            RadialSegment: 32,
+            RoofRadiusTop: 0,
+            RoofRadiusBottom: 20,
+            RoofHeight: 50,
             RoofRadialSegment: 32,
             WindowWidth: 10,
             WindowHeigth: 10,
@@ -170,13 +182,14 @@
          * Tour
          */
         var tour = createTower(Tour, textMurPath, textRoofPath, textWindowPath);
+        var tourEntree = createTower(TourEntree, textMurPath, textRoofPath, textWindowPath);
         /**
          * Donjon
          */
         var donjon = createTower(Donjon, textMurPath, textRoofPath, textWindowPath);
 
-        var house = createHouse(House, textMurStonePath, textRoofWoodPath, textWindowPath, textWoodDoorPath);
-        var house2 = createHouse(House2, textMurStone2Path, textRoofWoodPath, textWindowPath, textWoodDoorPath);
+        //var house = createHouse(House, textMurStonePath, textRoofWoodPath, textWindowPath, textWoodDoorPath);
+        //var house2 = createHouse(House2, textMurStone2Path, textRoofWoodPath, textWindowPath, textWoodDoorPath);
         /**
          * Entrée + porte
          */
@@ -202,35 +215,54 @@
         /**
          * Affichage
          */
-        house.position.set(100, 0, 0);
-        instanceToScene(house);
-        house2.position.set(-100, 0, 0);
-        instanceToScene(house2);
-        donjon.position.set(0, 0, 0);
-        instanceToScene(donjon);
-        tour.position.set(-(Tour.Radius + Muraille.Width / 2 - 5), 0, Tour.Radius + Muraille.Width / 2 - 5);
-        instanceToScene(tour);
-        tour.position.set(Tour.Radius + Muraille.Width / 2 - 5, 0, Tour.Radius + Muraille.Width / 2 - 5);
-        instanceToScene(tour);
-        tour.position.set(-(Tour.Radius + Muraille.Width / 2 - 5), 0, -(Tour.Radius + Muraille.Width / 2 - 5));
-        instanceToScene(tour);
-        tour.position.set(Tour.Radius + Muraille.Width / 2 - 5, 0, -(Tour.Radius + Muraille.Width / 2 - 5));
-        instanceToScene(tour);
-        frontMuraille.position.set(-(FrontMuraille.Width + Gate.Width) / 2, 0, (Muraille.Depth + Muraille.Width + Tour.Radius) / 2);
-        instanceToScene(frontMuraille);
-        frontMuraille.position.set((FrontMuraille.Width + Gate.Width) / 2, 0, (Muraille.Depth + Muraille.Width + Tour.Radius) / 2);
-        instanceToScene(frontMuraille);
-        muraille.position.set(0, 0, -(Muraille.Depth + Muraille.Width + Tour.Radius) / 2);
-        instanceToScene(muraille);
-        muraille.position.set(-(Muraille.Depth + Muraille.Width + Tour.Radius) / 2, 0, 0);
-        muraille.rotation.y = Math.radians(90);
-        instanceToScene(muraille);
-        muraille.position.set((Muraille.Depth + Muraille.Width + Tour.Radius) / 2, 0, 0);
-        instanceToScene(muraille);
-        entree.position.set(0, 0, frontMuraille.position.z);
+        entree.position.set(0, 0, 200);
         instanceToScene(entree);
-        group.add(terrain);
+        tourEntree.position.set(-(Gate.Width / 2 + TourEntree.Radius), 0, entree.position.z);
+        instanceToScene(tourEntree);
+        tourEntree.position.set(Gate.Width / 2 + TourEntree.Radius, 0, entree.position.z);
+        instanceToScene(tourEntree);
+        //demi cercle
+        frontMuraille.rotateY(Math.radians(20));
+        frontMuraille.position.set(tourEntree.position.x + TourEntree.Radius + FrontMuraille.Width / 2 - 10, 0, tourEntree.position.z - 30);
+        instanceToScene(frontMuraille);
+        tour.position.set(frontMuraille.position.x + FrontMuraille.Width / 2 + Tour.Radius - 10, 0, frontMuraille.position.z - Tour.Radius - 10);
+        instanceToScene(tour);
+        muraille.rotateY(Math.radians(90));
+        muraille.position.set(tour.position.x, 0, tour.position.z - Tour.Radius - Muraille.Width / 2 + 10);
+        instanceToScene(muraille);
+        tour.position.set(muraille.position.x, 0, muraille.position.z - Muraille.Width / 2 - Tour.Radius + 10);
+        instanceToScene(tour);
+        frontMuraille.rotateY(Math.radians(-50));
+        frontMuraille.position.set(tour.position.x - FrontMuraille.Width / 2 - 5, 0, tour.position.z - Tour.Radius - 20);
+        instanceToScene(frontMuraille);
+        frontMuraille.rotateY(Math.radians(30));
+        tour.position.set(tourEntree.position.x + 20, 0, frontMuraille.position.z - Tour.Radius - 20);
+        instanceToScene(tour);
 
+        //demi cercle
+        frontMuraille.rotateY(Math.radians(-20));
+        frontMuraille.position.set(-(tourEntree.position.x + TourEntree.Radius + FrontMuraille.Width / 2 - 10), 0, tourEntree.position.z - 30);
+        instanceToScene(frontMuraille);
+        tour.position.set(frontMuraille.position.x - (FrontMuraille.Width / 2 + Tour.Radius - 10), 0, frontMuraille.position.z - Tour.Radius - 10);
+        instanceToScene(tour);
+        muraille.position.set(tour.position.x, 0, tour.position.z - Tour.Radius - Muraille.Width / 2 + 10);
+        instanceToScene(muraille);
+        tour.position.set(muraille.position.x, 0, muraille.position.z - Muraille.Width / 2 - Tour.Radius + 10);
+        instanceToScene(tour);
+        frontMuraille.rotateY(Math.radians(50));
+        frontMuraille.position.set(tour.position.x + FrontMuraille.Width / 2 + 5, 0, tour.position.z - Tour.Radius - 20);
+        instanceToScene(frontMuraille);
+        tour.position.set(-tourEntree.position.x - 20, 0, frontMuraille.position.z - Tour.Radius - 20);
+        instanceToScene(tour);
+
+        //on ferme
+        frontMuraille.rotateY(Math.radians(-30));
+        frontMuraille.position.set(tour.position.x + Tour.Radius + FrontMuraille.Width / 2 - 5, 0, tour.position.z);
+        instanceToScene(frontMuraille);
+
+
+        group.add(terrain);
+        instanceToScene();
         /**
          * Options de rendu
          */
