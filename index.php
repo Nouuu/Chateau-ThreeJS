@@ -152,6 +152,17 @@
             WindowHeight: 10,
             WindowDepth: 3,
         };
+
+        var Building = {
+            Width: 180,
+            Depth: 180,
+            Height: 90,
+            WindowWidth: 15,
+            WindowDepth: 10,
+            WindowHeight: 3,
+            DoorWidth: 50,
+            DoorHeight: 50
+        };
         /**
          * Répétition des textures
          */
@@ -185,12 +196,13 @@
         var tour = createTower(Tour, textMurPath, textRoofPath, textWindowPath);
         var tourEntree = createTower(TourEntree, textMurPath, textRoofPath, textWindowPath);
         /**
-         * Donjon
+         * Donjon & maisons
          */
-        var donjon = createTower(Donjon, textMurPath, textRoofPath, textWindowPath);
 
         var house = createHouse(House, textMurStonePath, textRoofWoodPath, textWindowPath, textWoodDoorPath);
         var house2 = createHouse(House2, textMurStone2Path, textRoofTilePath, textWindowPath, textWoodDoorPath);
+
+        var fortress = createFortress(Building, TourEntree, textMurPath, textRoofPath, textWindowPath, textDoorPath);
         /**
          * Entrée + porte
          */
@@ -262,8 +274,8 @@
         instanceToScene(frontMuraille);
 
         //on place nos éléments
-        donjon.position.set(entree.position.x, 0, muraille.position.z);
-        instanceToScene(donjon);
+        fortress.position.set(entree.position.x, 0, muraille.position.z);
+        instanceToScene(fortress);
 
         house.rotateY(Math.radians(90));
         house.position.set(muraille.position.x + Muraille.Depth / 2 + House.Depth / 2, 0, muraille.position.z);
@@ -273,10 +285,10 @@
         house.position.set(entree.position.x - 100, 0, entree.position.z -60);
         instanceToScene(house);
 
-        house2.position.set(-(muraille.position.x + Muraille.Depth / 2 + House2.Width / 2), 0, donjon.position.z);
+        house2.position.set(-(muraille.position.x + Muraille.Depth / 2 + House2.Width / 2), 0, fortress.position.z);
         instanceToScene(house2);
         house2.rotateY(Math.radians(-30));
-        house2.position.set(100, 0, donjon.position.z - 220);
+        house2.position.set(100, 0, fortress.position.z - 220);
         instanceToScene(house2);
 
 
@@ -445,6 +457,79 @@
         group.add(mesh.clone());
         group.add(mesh2.clone());
         group.add(mesh3.clone());
+        return group;
+    }
+
+    function createFortress(building,TourEntree,textMurPath, textRoofPath, textWindowPath, textDoorPath) {
+
+        var textMur = new THREE.TextureLoader().load(textMurPath);
+        var textToit = new THREE.TextureLoader().load(textRoofPath);
+        var textPorte = new THREE.TextureLoader().load(textDoorPath);
+        var textWindow = new THREE.TextureLoader().load(textWindowPath);
+
+        textMur.wrapS = THREE.RepeatWrapping;
+        textMur.wrapT = THREE.RepeatWrapping;
+        textMur.repeat.set(building.Width / 10, building.Height / 10);
+
+        textToit.wrapS = THREE.RepeatWrapping;
+        textToit.wrapT = THREE.RepeatWrapping;
+        textToit.repeat.set(building.Height / 40, building.Height / 40);
+
+        var materialWindow = new THREE.MeshBasicMaterial({map: textWindow});
+        var materialMur = new THREE.MeshBasicMaterial({map: textMur});
+        var materialPorte = new THREE.MeshBasicMaterial({map: textPorte});
+        var materialToit = new THREE.MeshBasicMaterial({map: textToit});
+
+
+        var group = new THREE.Group();
+
+        var base = new THREE.Mesh(new THREE.BoxGeometry(building.Width, building.Height, building.Depth), materialMur);
+        base.position.set(0, building.Height/2, 0);
+        group.add(base.clone());
+
+        var towerBuilding = createTower(TourEntree, textMurPath, textRoofPath, textWindowPath);
+        towerBuilding.position.set(building.Width / 2, 0, building.Width / 2);
+        group.add(towerBuilding.clone());
+        towerBuilding.position.set(-building.Width / 2, 0, building.Width / 2);
+        group.add(towerBuilding.clone());
+        towerBuilding.position.set(-building.Width / 2, 0, -building.Width / 2);
+        group.add(towerBuilding.clone());
+        towerBuilding.position.set(building.Width / 2, 0, -building.Width / 2);
+        group.add(towerBuilding.clone());
+
+        var mainBuildingTop = new THREE.Mesh(new THREE.BoxGeometry(building.Width/1.4, building.Height/1.8, building.Depth/1.4), materialMur);
+        mainBuildingTop.position.set(0, building.Height/2 + (building.Width/1.4)/2, 0);
+        group.add(mainBuildingTop.clone());
+
+        var mainBuildingRoof = new THREE.Mesh(new THREE.BoxGeometry(building.Width/1.8 -10, building.Width/1.8 -10, building.Width/1.4 -1), materialToit);
+        mainBuildingRoof.rotateZ(Math.radians(45));
+        mainBuildingRoof.position.y = building.Height/2 + (building.Height/1.8)/2 + (building.Depth/1.4) / 2;
+        group.add(mainBuildingRoof.clone());
+
+        var buildingDoor = new THREE.Mesh(new THREE.PlaneGeometry(building.DoorWidth, building.DoorHeight), materialPorte);
+        buildingDoor.position.set(0, building.DoorHeight / 2, building.Depth/2 + 1);
+        group.add(buildingDoor.clone());
+
+        var buildingWindow = new THREE.Mesh(new THREE.BoxGeometry(building.WindowWidth, building.WindowHeight, building.WindowDepth), materialWindow);
+        buildingWindow.rotateX(Math.radians(90));
+        buildingWindow.position.set(25,building.Height + (building.Height/1.8) / 2, (building.Depth/1.4)/2);
+        group.add(buildingWindow.clone());
+        buildingWindow.position.set(-25,building.Height + (building.Height/1.8) / 2, (building.Depth/1.4)/2);
+        group.add(buildingWindow.clone());
+        buildingWindow.position.set(25,building.Height + (building.Height/1.8) / 2, -(building.Depth/1.4)/2);
+        group.add(buildingWindow.clone());
+        buildingWindow.position.set(-25,building.Height + (building.Height/1.8) / 2, -(building.Depth/1.4)/2);
+        group.add(buildingWindow.clone());
+        buildingWindow.position.set((building.Width/1.4)/2,building.Height + (building.Height/1.8) / 2, 25);
+        buildingWindow.rotateZ(Math.radians(90));
+        group.add(buildingWindow.clone());
+        buildingWindow.position.set((building.Width/1.4)/2,building.Height + (building.Height/1.8) / 2, -25);
+        group.add(buildingWindow.clone());
+        buildingWindow.position.set(-(building.Width/1.4)/2,building.Height + (building.Height/1.8) / 2, 25);
+        group.add(buildingWindow.clone());
+        buildingWindow.position.set(-(building.Width/1.4)/2,building.Height + (building.Height/1.8) / 2, -25);
+        group.add(buildingWindow.clone());
+
         return group;
     }
 
