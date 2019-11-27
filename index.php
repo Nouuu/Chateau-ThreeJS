@@ -43,6 +43,7 @@
         var textMurStone2Path = './tex/stone wall 4.png';
         var textRoofPath = './tex/roof.jpg';
         var textRoofWoodPath = './tex/wood floor 2.png';
+        var textRoofTilePath = './tex/tile roof 1.png';
         var textWindowPath = './tex/window.jpg';
         var textDoorPath = './tex/door.jpg';
         var textWoodDoorPath = './tex/wood_door_01.png';
@@ -112,23 +113,23 @@
             WindowDepth: 3,
         };
         var Donjon = {
-            Radius: 40,
-            Height: 130,
-            RadialSegment: 32,
-            RoofRadiusTop: 0,
-            RoofRadiusBottom: 50,
-            RoofHeight: 70,
-            RoofRadialSegment: 32,
-            WindowWidth: 20,
-            WindowHeigth: 20,
-            WindowDepth: 3,
-        };
-        var House = {
-            Width: 70,
-            Height: 50,
-            Depth: 70,
+            Radius: 55,
+            Height: 180,
+            RadialSegment: 4,
             RoofRadiusTop: 0,
             RoofRadiusBottom: 55,
+            RoofHeight: 70,
+            RoofRadialSegment: 8,
+            WindowWidth: 20,
+            WindowHeigth: 20,
+            WindowDepth: 30,
+        };
+        var House = {
+            Width: 50,
+            Height: 60,
+            Depth: 50,
+            RoofRadiusTop: 0,
+            RoofRadiusBottom: 40,
             RoofHeight: 50,
             RoofRadialSegment: 4,
             DoorWidth: 30,
@@ -188,8 +189,8 @@
          */
         var donjon = createTower(Donjon, textMurPath, textRoofPath, textWindowPath);
 
-        //var house = createHouse(House, textMurStonePath, textRoofWoodPath, textWindowPath, textWoodDoorPath);
-        //var house2 = createHouse(House2, textMurStone2Path, textRoofWoodPath, textWindowPath, textWoodDoorPath);
+        var house = createHouse(House, textMurStonePath, textRoofWoodPath, textWindowPath, textWoodDoorPath);
+        var house2 = createHouse(House2, textMurStone2Path, textRoofTilePath, textWindowPath, textWoodDoorPath);
         /**
          * Entrée + porte
          */
@@ -259,6 +260,24 @@
         frontMuraille.rotateY(Math.radians(-30));
         frontMuraille.position.set(tour.position.x + Tour.Radius + FrontMuraille.Width / 2 - 5, 0, tour.position.z);
         instanceToScene(frontMuraille);
+
+        //on place nos éléments
+        donjon.position.set(entree.position.x, 0, muraille.position.z);
+        instanceToScene(donjon);
+
+        house.rotateY(Math.radians(90));
+        house.position.set(muraille.position.x + Muraille.Depth / 2 + House.Depth / 2, 0, muraille.position.z);
+        instanceToScene(house);
+
+        house.rotateY(Math.radians(60));
+        house.position.set(entree.position.x - 100, 0, entree.position.z -60);
+        instanceToScene(house);
+
+        house2.position.set(-(muraille.position.x + Muraille.Depth / 2 + House2.Width / 2), 0, donjon.position.z);
+        instanceToScene(house2);
+        house2.rotateY(Math.radians(-30));
+        house2.position.set(100, 0, donjon.position.z - 220);
+        instanceToScene(house2);
 
 
         group.add(terrain);
@@ -347,6 +366,7 @@
         mesh = new THREE.Mesh(new THREE.CylinderBufferGeometry(Tower.Radius, Tower.Radius, Tower.Height,
             Tower.RadialSegment), materialMur);
         mesh.position.y = Tower.Height / 2;
+        mesh.rotateY(Math.radians(45));
 
         mesh2 = new THREE.Mesh(new THREE.CylinderBufferGeometry(Tower.RoofRadiusTop, Tower.RoofRadiusBottom,
             Tower.RoofHeight, Tower.RoofRadialSegment), materialToit);
@@ -355,14 +375,14 @@
         if (Tower.WindowWidth !== undefined) {
             mesh3 = new THREE.Mesh(new THREE.BoxGeometry(Tower.WindowWidth, Tower.WindowHeigth, Tower.WindowDepth),
                 materialWindow);
-            mesh3.position.set(0, Tower.Height - Tower.WindowHeigth / 2 - 5, Tower.Radius - Tower.WindowDepth / 2);
+            mesh3.position.set(0, Tower.Height - Tower.WindowHeigth / 2 - 5, Tower.Radius - Tower.WindowDepth + 2);
             group.add(mesh3.clone());
-            mesh3.position.set(0, Tower.Height - Tower.WindowHeigth / 2 - 5, -Tower.Radius + Tower.WindowDepth / 2);
+            mesh3.position.set(0, Tower.Height - Tower.WindowHeigth / 2 - 5, -Tower.Radius + Tower.WindowDepth - 2);
             group.add(mesh3.clone());
             mesh3.rotateY(Math.radians(90));
-            mesh3.position.set(Tower.Radius - Tower.WindowDepth / 2, Tower.Height - Tower.WindowHeigth / 2 - 5, 0);
+            mesh3.position.set(Tower.Radius - Tower.WindowDepth + 2, Tower.Height - Tower.WindowHeigth / 2 - 5, 0);
             group.add(mesh3.clone());
-            mesh3.position.set(-Tower.Radius + Tower.WindowDepth / 2, Tower.Height - Tower.WindowHeigth / 2 - 5, 0);
+            mesh3.position.set(-Tower.Radius + Tower.WindowDepth - 2, Tower.Height - Tower.WindowHeigth / 2 - 5, 0);
             group.add(mesh3.clone());
         }
 
@@ -381,11 +401,11 @@
 
         textMur.wrapS = THREE.RepeatWrapping;
         textMur.wrapT = THREE.RepeatWrapping;
-        textMur.repeat.set(house.Width / 5, house.Height / 5);
+        textMur.repeat.set(house.Width / 10, house.Height / 10);
 
         textToit.wrapS = THREE.RepeatWrapping;
         textToit.wrapT = THREE.RepeatWrapping;
-        textToit.repeat.set(6, 3);
+        textToit.repeat.set(house.RoofRadiusBottom / 20, house.RoofHeight / 30);
 
         textPorte.wrapS = THREE.RepeatWrapping;
         textPorte.wrapT = THREE.RepeatWrapping;
