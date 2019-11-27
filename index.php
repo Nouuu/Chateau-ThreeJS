@@ -14,20 +14,18 @@
 <body>
 <script type="module">
     import * as THREE from './three.module.js';
-
+    import { OrbitControls } from './OrbitControls.js';
     Math.radians = function (degrees) {
         return degrees * Math.PI / 180;
     };
-    var camera, scene, renderer;
+    var camera, scene, renderer, controls;
     var terrain, mesh, mesh2, mesh3, mesh4, mesh5, mesh6;
     var group = new THREE.Group();
     init();
     animate();
-
     function init() {
 
         scene = new THREE.Scene();
-
         camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 3000);
         camera.position.z = 300;
         camera.position.y = 180;
@@ -39,8 +37,13 @@
          * Textures matériel
          */
         var textMurPath = './tex/stone wall 7.png';
+        var textMurStonePath = './tex/stone wall 10.png';
         var textRoofPath = './tex/roof.jpg';
+        var textRoofWoodPath = './tex/wood floor 2.png';
         var textWindowPath = './tex/window.jpg';
+        var textDoorPath = './tex/door.jpg';
+        var textWoodDoorPath = './tex/wood_door_01.png';
+
         var textGrass = new THREE.TextureLoader().load('./tex/grass1.png');
         var textPorte = new THREE.TextureLoader().load('./tex/door.jpg');
         var textGate = new THREE.TextureLoader().load(textMurPath);
@@ -105,6 +108,20 @@
             WindowHeigth: 20,
             WindowDepth: 3,
         };
+        var House = {
+            Width: 70,
+            Height: 50,
+            Depth: 70,
+            RoofRadiusTop: 0,
+            RoofRadiusBottom: 55,
+            RoofHeight: 50,
+            RoofRadialSegment: 4,
+            DoorWidth: 30,
+            DoorHeight: 30,
+            WindowWidth: 20,
+            WindowHeigth: 20,
+            WindowDepth: 3,
+        };
         /**
          * Répétition des textures
          */
@@ -140,6 +157,8 @@
          * Donjon
          */
         var donjon = createTower(Donjon, textMurPath, textRoofPath, textWindowPath);
+
+        var house = createHouse(House, textMurStonePath, textRoofWoodPath, textWindowPath, textWoodDoorPath);
         /**
          * Entrée + porte
          */
@@ -165,9 +184,10 @@
         /**
          * Affichage
          */
+        house.position.set(100, 0, 0);
+        instanceToScene(house);
         donjon.position.set(0, 0, 0);
         instanceToScene(donjon);
-
         tour.position.set(-(Tour.Radius + Muraille.Width / 2 - 5), 0, Tour.Radius + Muraille.Width / 2 - 5);
         instanceToScene(tour);
         tour.position.set(Tour.Radius + Muraille.Width / 2 - 5, 0, Tour.Radius + Muraille.Width / 2 - 5);
@@ -176,13 +196,10 @@
         instanceToScene(tour);
         tour.position.set(Tour.Radius + Muraille.Width / 2 - 5, 0, -(Tour.Radius + Muraille.Width / 2 - 5));
         instanceToScene(tour);
-
         frontMuraille.position.set(-(FrontMuraille.Width + Gate.Width) / 2, 0, (Muraille.Depth + Muraille.Width + Tour.Radius) / 2);
         instanceToScene(frontMuraille);
         frontMuraille.position.set((FrontMuraille.Width + Gate.Width) / 2, 0, (Muraille.Depth + Muraille.Width + Tour.Radius) / 2);
         instanceToScene(frontMuraille);
-
-
         muraille.position.set(0, 0, -(Muraille.Depth + Muraille.Width + Tour.Radius) / 2);
         instanceToScene(muraille);
         muraille.position.set(-(Muraille.Depth + Muraille.Width + Tour.Radius) / 2, 0, 0);
@@ -190,7 +207,6 @@
         instanceToScene(muraille);
         muraille.position.set((Muraille.Depth + Muraille.Width + Tour.Radius) / 2, 0, 0);
         instanceToScene(muraille);
-
         entree.position.set(0, 0, frontMuraille.position.z);
         instanceToScene(entree);
         group.add(terrain);
@@ -205,6 +221,13 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
         window.addEventListener('resize', onWindowResize, false);
+        controls = new OrbitControls( camera, renderer.domElement );
+        controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+        controls.dampingFactor = 0.05;
+        controls.screenSpacePanning = false;
+        controls.minDistance = 50;
+        controls.maxDistance = 500;
+        controls.maxPolarAngle = Math.PI / 2 - 0.05;
     }
 
     function instanceToScene(mesh) {
@@ -230,29 +253,29 @@
         var materialMur = new THREE.MeshBasicMaterial({map: textMur});
 
 
-        var MurailleG = new THREE.Group();
+        var group = new THREE.Group();
 
 
         geometry = new THREE.CubeGeometry(Muraille.Width, Muraille.Height, Muraille.Depth);
         mesh = new THREE.Mesh(geometry, materialMur);
         mesh.position.y = Muraille.Height / 2;
-        MurailleG.add(mesh.clone());
+        group.add(mesh.clone());
 
         if (Rempart !== null) {
             for (let initX = -(Muraille.Width / 2) + (Rempart.Width / 2); initX <= Muraille.Width / 2; initX += 20) {
                 geometry = new THREE.CubeGeometry(Rempart.Width, Rempart.Height, Rempart.Depth);
                 mesh = new THREE.Mesh(geometry, materialRempart);
                 mesh.position.set(initX, Muraille.Height + Rempart.Height / 2, (Muraille.Depth - Rempart.Depth) / 2);
-                MurailleG.add(mesh.clone());
+                group.add(mesh.clone());
                 mesh.position.z = (-Muraille.Depth + Rempart.Depth) / 2;
-                MurailleG.add(mesh.clone());
+                group.add(mesh.clone());
             }
         }
-        return MurailleG;
+        return group;
     }
 
     function createTower(Tower, textMurPath, textToitPath, windowTextPath) {
-        var tour = new THREE.Group();
+        var group = new THREE.Group();
         var textMur = new THREE.TextureLoader().load(textMurPath);
         var textToit = new THREE.TextureLoader().load(textToitPath);
         var materialMur = new THREE.MeshBasicMaterial({map: textMur});
@@ -281,28 +304,80 @@
             mesh3 = new THREE.Mesh(new THREE.BoxGeometry(Tower.WindowWidth, Tower.WindowHeigth, Tower.WindowDepth),
                 materialWindow);
             mesh3.position.set(0, Tower.Height - Tower.WindowHeigth / 2 - 5, Tower.Radius - Tower.WindowDepth / 2);
-            tour.add(mesh3.clone());
+            group.add(mesh3.clone());
             mesh3.position.set(0, Tower.Height - Tower.WindowHeigth / 2 - 5, -Tower.Radius + Tower.WindowDepth / 2);
-            tour.add(mesh3.clone());
+            group.add(mesh3.clone());
             mesh3.rotateY(Math.radians(90));
             mesh3.position.set(Tower.Radius - Tower.WindowDepth / 2, Tower.Height - Tower.WindowHeigth / 2 - 5, 0);
-            tour.add(mesh3.clone());
+            group.add(mesh3.clone());
             mesh3.position.set(-Tower.Radius + Tower.WindowDepth / 2, Tower.Height - Tower.WindowHeigth / 2 - 5, 0);
-            tour.add(mesh3.clone());
+            group.add(mesh3.clone());
         }
 
-        tour.add(mesh.clone());
-        tour.add(mesh2.clone());
+        group.add(mesh.clone());
+        group.add(mesh2.clone());
 
-        return tour;
+        return group;
     }
 
+    function createHouse(house, murPath, roofPath, windowPath, doorPath) {
+        var group = new THREE.Group();
+        var textMur = new THREE.TextureLoader().load(murPath);
+        var textToit = new THREE.TextureLoader().load(roofPath);
+        var textPorte = new THREE.TextureLoader().load(doorPath);
+        var textWindow = new THREE.TextureLoader().load(windowPath);
+
+        textMur.wrapS = THREE.RepeatWrapping;
+        textMur.wrapT = THREE.RepeatWrapping;
+        textMur.repeat.set(house.Width / 5, house.Height / 5);
+
+        textToit.wrapS = THREE.RepeatWrapping;
+        textToit.wrapT = THREE.RepeatWrapping;
+        textToit.repeat.set(6, 3);
+
+        textPorte.wrapS = THREE.RepeatWrapping;
+        textPorte.wrapT = THREE.RepeatWrapping;
+        textPorte.repeat.set(2, 1);
+
+        var materialWindow = new THREE.MeshBasicMaterial({map: textWindow});
+        var materialMur    = new THREE.MeshBasicMaterial({map: textMur});
+        var materialPorte  = new THREE.MeshBasicMaterial({map: textPorte});
+        var materialToit   = new THREE.MeshBasicMaterial({map: textToit});
+
+
+        mesh = new THREE.Mesh(new THREE.BoxGeometry(house.Width, house.Height, house.Depth), materialMur);
+        mesh.position.set(0, house.Height / 2, 0);
+
+        mesh2 = new THREE.Mesh(new THREE.PlaneGeometry(house.DoorWidth, house.DoorHeight), materialPorte);
+        mesh2.position.set(0, house.DoorHeight / 2, house.Depth / 2 + 0.1);
+
+        mesh3 = new THREE.Mesh(new THREE.CylinderBufferGeometry(
+            house.RoofRadiusTop,
+            house.RoofRadiusBottom,
+            house.RoofHeight,
+            house.RoofRadialSegment), materialToit);
+        mesh3.position.y = house.Height +  house.RoofHeight / 2;
+        mesh3.rotateY(Math.radians(45));
+
+        mesh4 = new THREE.Mesh(new THREE.BoxGeometry(house.WindowWidth, house.WindowHeigth, house.WindowDepth),
+            materialWindow);
+        mesh4.rotateY(Math.radians(90));
+        mesh4.position.set(house.Width / 2, house.Height - house.WindowHeigth / 2 - 10, 0);
+        group.add(mesh4.clone());
+
+        mesh4.position.set(-house.Width / 2, house.Height - house.WindowHeigth / 2 - 10, 0);
+        group.add(mesh4.clone());
+
+        group.add(mesh.clone());
+        group.add(mesh2.clone());
+        group.add(mesh3.clone());
+        return group;
+    }
 
     function onWindowResize() {
 
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
-
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
